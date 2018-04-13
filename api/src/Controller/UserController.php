@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use App\Service\FileUploader;
 
 class UserController extends Controller
 {
@@ -17,18 +18,14 @@ class UserController extends Controller
      * Function d'enregistrement
      * @Route("/register", name="register")
      */
-    public function register(Request $request, UserPasswordEncoderInterface $encoder)
+    public function register(Request $request, UserPasswordEncoderInterface $encoder, FileUploader $fileUploader)
     {
         $em = $this->getDoctrine()->getManager();
         $user = new User();
         $data = (object) $request->request->all();
         if ($request->files->count() == 1) {
             $file = $request->files->get('picture');
-            $fileName = $this->generateUniqueFileName().'.'.$file->guessExtension();
-            $file->move(
-                $this->getParameter('profile_directory'),
-                $fileName
-            );
+            $fileName = $fileUploader->upload($file);
             $user->setPicture($fileName);
         }
 

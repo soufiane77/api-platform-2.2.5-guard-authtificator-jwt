@@ -29,3 +29,7 @@ services:
     jwt_token_authenticator:
         class: App\Security\JwtTokenAuthenticator
         autowire: true
+
+    App\Service\FileUploader:
+        arguments:
+            $targetDirectory: '%profile_directory%'
